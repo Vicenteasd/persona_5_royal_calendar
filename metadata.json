@@ -1,0 +1,5 @@
+{
+  "name": "Chronos Calendar",
+  "description": "A specialized calendar app tracking daily activities from April 9th to February 3rd, featuring day/night segregation and notes.",
+  "requestFramePermissions": []
+}
