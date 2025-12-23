@@ -9,8 +9,112 @@ import { DayModalComponent } from './components/day-modal.component';
   selector: 'app-root',
   standalone: true,
   imports: [CommonModule, CalendarMonthComponent, DayModalComponent],
-  templateUrl: './app.component.html',
-  styleUrls: []
+  template: `
+<div class="min-h-screen relative">
+  <!-- Dynamic Background Graphic (Abstract Star/Splash) -->
+  <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden opacity-10">
+    <div class="absolute -top-20 -right-20 w-[600px] h-[600px] bg-red-600 rotate-45 transform skew-x-12"></div>
+    <div class="absolute top-40 left-0 w-full h-32 bg-black -rotate-6"></div>
+    <div class="absolute bottom-0 right-0 w-[800px] h-[800px] bg-white rounded-full mix-blend-overlay filter blur-3xl"></div>
+  </div>
+
+  <!-- Header -->
+  <header class="relative z-30">
+    <!-- Skewed Red Background Bar -->
+    <div class="bg-[#d91c2b] h-20 w-[110%] -ml-[5%] transform -skew-y-2 shadow-[0_10px_0_rgba(0,0,0,1)] border-b-4 border-black flex items-center justify-center">
+      <div class="w-full max-w-5xl px-8 flex items-center justify-between transform skew-y-2">
+        
+        <!-- Logo Area -->
+        <div class="flex items-center gap-3">
+          <h1 class="text-4xl font-bold tracking-tighter text-white drop-shadow-[4px_4px_0_rgba(0,0,0,1)] uppercase italic" style="font-family: 'Oswald', sans-serif;">
+            {{ ts.t().title }} <span class="text-black bg-white px-1">Calendar</span>
+          </h1>
+        </div>
+
+        <!-- Right Side Actions -->
+        <div class="flex items-center gap-4">
+          
+          <!-- Language Selector -->
+          <div class="relative">
+            <button (click)="toggleLangMenu()" class="flex items-center justify-center w-12 h-10 bg-black border-2 border-white transform -skew-x-12 hover:bg-[#222] transition-colors shadow-[2px_2px_0_rgba(0,0,0,0.5)] overflow-hidden">
+              <div class="transform skew-x-12 w-full h-full flex items-center justify-center">
+                 @for(lang of ts.languages; track lang.code) {
+                    @if(lang.code === ts.currentLang()) {
+                       <img [src]="lang.flagUrl" [alt]="lang.name" class="w-6 h-auto shadow-sm">
+                    }
+                 }
+              </div>
+            </button>
+
+            <!-- Dropdown -->
+            @if (showLangMenu()) {
+              <div class="absolute top-12 right-0 bg-white border-4 border-black shadow-[4px_4px_0_rgba(0,0,0,1)] min-w-[150px] z-50 transform -skew-x-2 animate-in fade-in slide-in-from-top-2 duration-100">
+                @for(lang of ts.languages; track lang.code) {
+                   <button (click)="setLang(lang.code)" class="w-full text-left px-4 py-3 hover:bg-[#d91c2b] hover:text-white font-bold uppercase transition-colors flex items-center gap-3 border-b border-gray-200 last:border-0 group">
+                      <img [src]="lang.flagUrl" [alt]="lang.name" class="w-6 h-auto shadow-sm border border-gray-300 group-hover:border-white">
+                      <span class="text-sm tracking-wider">{{ lang.name }}</span>
+                   </button>
+                }
+              </div>
+            }
+          </div>
+
+          <!-- Toggle Button -->
+          <button (click)="toggleJson()" class="group relative bg-black text-white px-6 py-2 font-bold uppercase tracking-widest transform -skew-x-12 border-2 border-transparent hover:border-white hover:bg-[#222] transition-all">
+            <span class="block transform skew-x-12 group-hover:scale-110 transition-transform">
+              {{ showJson() ? ts.t().hideIntel : ts.t().viewIntel }}
+            </span>
+          </button>
+
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+    
+    <!-- JSON View (Phantom Thief Card Style) -->
+    @if (showJson()) {
+      <div class="mb-12 relative group animate-pulse-once">
+        <div class="absolute inset-0 bg-red-600 transform translate-x-2 translate-y-2"></div>
+        <div class="relative bg-black border-2 border-white p-6 shadow-[8px_8px_0_rgba(217,28,43,1)]">
+          <h3 class="text-white text-2xl uppercase italic font-black mb-4 border-b-2 border-red-600 inline-block pr-8">
+            {{ ts.t().targetData }} <span class="text-red-500">//</span> {{ ts.t().secret }}
+          </h3>
+          <pre class="text-sm text-[#00ff00] font-mono overflow-x-auto whitespace-pre-wrap leading-tight bg-[#111] p-4 border border-gray-700">{{ jsonData() }}</pre>
+        </div>
+      </div>
+    }
+
+    <!-- Calendar Grid -->
+    <div class="relative mt-4">
+        <!-- Decoration behind calendar -->
+        <div class="absolute -top-4 -left-4 w-16 h-16 border-t-4 border-l-4 border-black z-20"></div>
+        <div class="absolute -bottom-4 -right-4 w-16 h-16 border-b-4 border-r-4 border-black z-20"></div>
+        
+        <app-calendar-month
+        [year]="displayYear()"
+        [month]="displayMonth()"
+        [entries]="entriesMap()"
+        [canGoBack]="canGoBack()"
+        [canGoNext]="canGoNext()"
+        (monthChanged)="changeMonth($event)"
+        (dayClicked)="openDay($event)"
+        ></app-calendar-month>
+    </div>
+  </main>
+
+  <!-- Modal -->
+  @if (isModalOpen() && selectedEntry()) {
+    <app-day-modal
+      [entry]="selectedEntry()!"
+      (close)="closeModal()"
+      (save)="saveEntry($event)"
+    ></app-day-modal>
+  }
+</div>
+  `,
 })
 export class AppComponent {
   // State for navigation

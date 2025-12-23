@@ -1,20 +1,36 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# Chronos Calendar
 
-# Run and deploy your AI Studio app
+A Persona 5 inspired calendar application.
 
-This contains everything you need to run your app locally.
+## Prerequisites
 
-View your app in AI Studio: https://ai.studio/apps/drive/1FHzufHh0KcYQ_gwXZcTyOy2gA1VUlR6I
+1.  **Node.js**: Install the latest LTS version from [nodejs.org](https://nodejs.org/).
+2.  **Code Editor**: Visual Studio Code is recommended.
 
-## Run Locally
+## Installation
 
-**Prerequisites:**  Node.js
+1.  Download/Unzip this project folder.
+2.  Open a terminal (Command Prompt, PowerShell, or Git Bash) in this project folder.
+3.  Install dependencies:
+    ```bash
+    npm install
+    ```
 
+## Running the App
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+1.  Start the development server:
+    ```bash
+    npm run dev
+    ```
+2.  Open your browser and navigate to `http://localhost:5173`.
+
+## Building for Production
+
+To create a static build:
+```bash
+npm run build
+```
+The output will be in the `dist` folder.
+
+## Note
+This project uses **Vite** with **Angular 18+**. It runs in a zoneless configuration for maximum performance.
